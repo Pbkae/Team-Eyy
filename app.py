@@ -412,6 +412,8 @@ if section == "Descriptive Statistics & Visualization":
     plt.title('Correlation Matrix for Age, Years of Experience, and Salary')
     st.pyplot(plt)
 
+#----------------------------------------------------------------------------------------------------------------------
+
 # Apriori Algorithm Section
 if section == "Apriori Algorithm":
     st.title("Apriori Algorithm")
@@ -425,7 +427,7 @@ if section == "Apriori Algorithm":
     )
 
     # Load the cleaned dataset
-    df_cleaned = load_data()
+    df_cleaned_apriori = load_data()
 
     # Define the columns to process (update based on your data)
     columns_to_encode = [
@@ -440,8 +442,8 @@ if section == "Apriori Algorithm":
     binary_df = pd.DataFrame()
 
     for col in columns_to_encode:
-        if col in df_cleaned.columns:
-            split_data = df_cleaned[col].str.get_dummies(sep=';')
+        if col in df_cleaned_apriori.columns:
+            split_data = df_cleaned_apriori[col].str.get_dummies(sep=';')
             binary_df = pd.concat([binary_df, split_data], axis=1)
 
     # Convert binary matrix to boolean type
@@ -459,7 +461,7 @@ if section == "Apriori Algorithm":
     top_rules = rules[['antecedents', 'consequents', 'support', 'confidence', 'lift']].head(10)
 
     # Display the top association rules table in Streamlit using st.table
-    st.write("Top 10 association rules (sorted by lift):")
+    st.write("Top 10 association rules between tools (sorted by lift):")
     st.table(top_rules)
 
     # ------------------------------------------------------------------------------------------------------------------------------
@@ -472,12 +474,12 @@ if section == "Apriori Algorithm":
     ]
 
     # Convert employment data to binary
-    binary_employment = pd.get_dummies(df_cleaned[employment_columns], prefix=employment_columns).astype(bool)
+    binary_employment = pd.get_dummies(df_cleaned_apriori[employment_columns], prefix=employment_columns).astype(bool)
     binary_tech = pd.DataFrame()
 
     for col in tech_columns:
-        if col in df_cleaned.columns:
-            split_data = df_cleaned[col].str.get_dummies(sep=';').astype(bool)
+        if col in df_cleaned_apriori.columns:
+            split_data = df_cleaned_apriori[col].str.get_dummies(sep=';').astype(bool)
             binary_tech = pd.concat([binary_tech, split_data], axis=1)
 
     # Combine employment and tech binary data
@@ -496,10 +498,3 @@ if section == "Apriori Algorithm":
     # Display the filtered and sorted rules table in Streamlit using st.table
     st.write("Top 10 association rules for Employment and Technology:")
     st.table(top_rules)
-
-    # Optional: Visualize the filtered rules
-    st.write("Visualization of Employment and Technology associations:")
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.barplot(x='lift', y='antecedents', data=top_rules, ax=ax)
-    ax.set_title("Top 10 Employment and Technology Associations by Lift")
-    st.pyplot(fig)

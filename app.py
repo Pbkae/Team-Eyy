@@ -7,6 +7,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from mlxtend.frequent_patterns import apriori, association_rules
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.cluster import KMeans
+from sklearn.impute import SimpleImputer
+
+
 
 
 @st.cache_data
@@ -175,14 +180,7 @@ if section == "K-means Clustering":
     # Brief Explanation
     st.write("K-means clustering is applied to group respondents based on their education level, coding experience, and professional coding experience. The optimal number of clusters is determined using the Elbow Method, and the results are visualized.")
 
-    # Import libraries
-    import pandas as pd
-    import numpy as np
-    from sklearn.preprocessing import StandardScaler, LabelEncoder
-    from sklearn.cluster import KMeans
-    from sklearn.impute import SimpleImputer
-    import matplotlib.pyplot as plt
-    import seaborn as sns
+
 
     # Load the cleaned dataset
     data = load_data()  # Assumes load_data() is defined above
@@ -416,15 +414,55 @@ if section == "Descriptive Statistics & Visualization":
 
 # Apriori Algorithm Section
 if section == "Apriori Algorithm":
-    st.title("Apriori Algorithm")
+    # Title for the explanation section
+    st.title("Apriori Algorithm Code")
 
-    # Brief Explanation
-    st.write(
-        "The Apriori algorithm is used to find frequent itemsets and generate association rules, "
-        "helping identify patterns in how developers use various technologies. It reveals common "
-        "combinations of tools and technologies, providing insights into how certain technologies "
-        "are grouped together in real-world scenarios."
-    )
+    # Explanation in structured format
+    st.markdown("""
+    - **Purpose**: Highlight the application of the Apriori Algorithm in analyzing developer behavior.
+    - **Explanation**: The algorithm uncovers frequently occurring itemsets and association rules, offering insights into common combinations of tools and technologies used by developers.
+
+    ---
+
+    ### Loading and Preparing Data
+    - **Dataset**: A cleaned dataset (`df_cleaned_apriori`) is loaded for processing.
+    - **Key Columns**: Focuses on specific columns such as:
+        - `LanguageHaveWorkedWith`
+        - `DatabaseHaveWorkedWith`
+        - `WebframeHaveWorkedWith`
+        - `ToolsTechHaveWorkedWith`
+        - `DevType`
+    - **Binary Matrix**:
+        1. These columns often contain multiple values separated by `;`.
+        2. The code splits these values into individual features using `str.get_dummies(sep=';')`.
+        3. Combines the binary-encoded data into a single matrix (`binary_df`).
+        4. Converts the binary data into a boolean format for the Apriori algorithm.
+
+    ---
+
+    ### Applying the Apriori Algorithm
+    - **Frequent Itemsets**:
+        - The `apriori` function is applied to the binary data.
+        - Finds combinations of items that occur together frequently.
+        - Sets `min_support=0.05`, meaning combinations must appear in at least 5% of the data.
+    - **Association Rules**:
+        - **Metric**: "Lift" is chosen to measure how much more likely items co-occur than by chance.
+        - **Threshold**: A minimum lift value of 1.0 ensures the rules are meaningful.
+    - **Sorting**:
+        - Rules are sorted by `lift` in descending order to prioritize the strongest relationships.
+
+    ---
+
+    ### Top Rules Display
+    - **Output**: Displays the top 10 association rules:
+        - **Antecedents**: Items on the left-hand side of the rule.
+        - **Consequents**: Items on the right-hand side of the rule.
+        - **Metrics**:
+            - **Support**: Frequency of the itemset in the dataset.
+            - **Confidence**: Likelihood of the consequent given the antecedent.
+            - **Lift**: Strength of the association.
+    """)
+
 
     # Load the cleaned dataset
     df_cleaned_apriori = load_data()
@@ -465,6 +503,32 @@ if section == "Apriori Algorithm":
     st.table(top_rules)
 
     # ------------------------------------------------------------------------------------------------------------------------------
+
+    # Explanation in structured format
+    st.markdown("""
+     ---
+    ### Exploring Relationships Between Employment Factors and Technology Usage
+    - **Goal**: Analyze how employment factors (e.g., job type, remote work, organization size) relate to technology usage.
+    - **Process**:
+        - **Binary Conversion**:
+            1. Employment data (`Employment`, `RemoteWork`, `OrgSize`) is one-hot encoded.
+            2. Technology columns are split and binary-encoded, similar to the earlier process.
+        - **Combining Data**:
+            - Binary matrices for employment factors and technologies are merged.
+        - **Apriori Application**:
+            - The algorithm is reapplied to the combined dataset.
+        - **Association Rules**:
+            - Same process as before, focusing on relationships between employment factors and technology usage.
+
+    ---
+
+    ### Conclusion and Insights
+    - **Result**: Two tables of top 10 association rules are displayed:
+        1. For general tools and technologies.
+        2. For employment factors and technology usage.
+    - **Use Case**: These insights can help organizations understand how certain job conditions influence technology adoption or identify popular technology stacks among developers.
+    """)
+
 
     # Exploring relationships between employment factors and technology usage
     employment_columns = ['Employment', 'RemoteWork', 'OrgSize']
